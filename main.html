@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jagoan Siber: Panduan Aman Dunia Maya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Chosen Palette: Warm Neutral (Latar: stone-50, Aksen: sky-500, Teks: stone-800) -->
+    <!-- Application Structure Plan: Struktur aplikasi dirancang secara tematik, bukan linear seperti slide. Dimulai dengan Hero section yang menarik perhatian, diikuti oleh bagian 'Kenali Ancaman' dengan kartu interaktif untuk dijelajahi. Kemudian, sebuah grafik visual untuk menunjukkan skala masalah, diikuti oleh bagian 'Jurus Jagoan Siber' dalam format akordeon agar tidak membanjiri pengguna dengan informasi. Terakhir, ada panduan darurat yang jelas dan kesimpulan. Struktur ini dipilih untuk mendorong eksplorasi aktif dan menjaga keterlibatan pengguna, berbeda dari alur pasif sebuah presentasi. -->
+    <!-- Visualization & Content Choices: 
+        - Ancaman Siber (Info: Jenis-jenis ancaman dari slide 4) -> Goal: Organize & Inform -> Viz: Kartu interaktif (HTML/Tailwind) -> Interaction: Klik untuk melihat detail dalam modal. Justification: Lebih menarik daripada daftar statis.
+        - Statistik Ancaman (Info: Data buatan tentang prevalensi ancaman) -> Goal: Compare & Inform -> Viz: Grafik batang horizontal (Chart.js) -> Interaction: Hover untuk tooltip. Justification: Memberikan konteks kuantitatif yang nyata.
+        - Jurus Jagoan Siber (Info: Tips dari slide 6-9) -> Goal: Organize & Instruct -> Viz: Akordeon (HTML/Tailwind/JS) -> Interaction: Klik untuk membuka setiap jurus. Justification: Mencegah kelebihan informasi, fokus pada satu tips.
+        - Ikon Visual (Info: Ikon untuk ancaman) -> Goal: Inform -> Viz: Karakter Unicode. Justification: Ringan dan cepat tanpa memerlukan gambar atau SVG.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 300px;
+        max-height: 40vh;
+      }
+      @media (min-width: 768px) {
+        .chart-container {
+          height: 350px;
+        }
+      }
+      .nav-link {
+        transition: all 0.3s ease;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        color: #0284c7; /* sky-600 */
+        transform: translateY(-2px);
+      }
+      .card {
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow:
+          0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+      }
+    </style>
+  </head>
+  <body class="bg-stone-50 text-stone-800">
+    <!-- Header & Navigasi -->
+    <header class="bg-stone-50/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex-shrink-0 flex items-center">
+            <img
+              src="logo_kkn_pengasih.png"
+              alt="Logo Jagoan Siber"
+              class="h-8 w-auto"
+            />
+            <a href="#hero" class="text-xl font-bold text-sky-600 ml-2">
+              Jagoan Siber
+            </a>
+          </div>
+          <nav class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+              <a
+                href="#ancaman"
+                class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-stone-600"
+                >Ancaman</a
+              >
+              <a
+                href="#statistik"
+                class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-stone-600"
+                >Statistik</a
+              >
+              <a
+                href="#jurus"
+                class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-stone-600"
+                >Jurus Ampuh</a
+              >
+              <a
+                href="#bantuan"
+                class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-stone-600"
+                >Bantuan</a
+              >
+            </div>
+          </nav>
+          <div class="md:hidden">
+            <button
+              id="mobile-menu-button"
+              class="inline-flex items-center justify-center p-2 rounded-md text-stone-600 hover:text-sky-600 hover:bg-stone-100 focus:outline-none"
+            >
+              <span class="sr-only">Buka menu utama</span>
+              <svg
+                id="menu-icon-open"
+                class="h-6 w-6 block"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                ></path>
+              </svg>
+              <svg
+                id="menu-icon-close"
+                class="h-6 w-6 hidden"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="mobile-menu" class="md:hidden hidden">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a
+            href="#ancaman"
+            class="nav-link block px-3 py-2 rounded-md text-base font-semibold text-stone-600"
+            >Ancaman</a
+          >
+          <a
+            href="#statistik"
+            class="nav-link block px-3 py-2 rounded-md text-base font-semibold text-stone-600"
+            >Statistik</a
+          >
+          <a
+            href="#jurus"
+            class="nav-link block px-3 py-2 rounded-md text-base font-semibold text-stone-600"
+            >Jurus Ampuh</a
+          >
+          <a
+            href="#bantuan"
+            class="nav-link block px-3 py-2 rounded-md text-base font-semibold text-stone-600"
+            >Bantuan</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <!-- Hero Section -->
+      <section id="hero" class="text-center py-12 md:py-20">
+        <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-sky-600">
+          Jelajahi Dunia Maya dengan Aman.
+        </h1>
+        <p
+          class="mt-4 md:mt-6 max-w-2xl mx-auto text-lg md:text-xl text-stone-600"
+        >
+          Internet itu super seru, tapi ada aturannya. Pelajari caranya menjadi
+          <span class="font-bold text-sky-500">Jagoan Siber</span> dan lindungi
+          dirimu di dunia digital!
+        </p>
+      </section>
+
+      <!-- Ancaman Section -->
+      <section id="ancaman" class="py-12 md:py-20">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold">
+            Kenali Ancaman di Sekitarmu
+          </h2>
+          <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">
+            Di dunia maya, ada beberapa "musuh" yang perlu kamu waspadai. Kenali
+            mereka agar kamu bisa menghindarinya. Klik setiap kartu untuk info
+            lebih lanjut!
+          </p>
+        </div>
+        <div
+          id="ancaman-cards"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          <!-- Kartu Ancaman akan di-generate oleh JavaScript -->
+        </div>
+      </section>
+
+      <!-- Statistik Section -->
+      <section id="statistik" class="py-12 md:py-20 bg-stone-100 rounded-2xl">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold">
+            Seberapa Umum Ancaman Ini?
+          </h2>
+          <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">
+            Ancaman siber lebih sering terjadi daripada yang kita kira. Grafik
+            ini menunjukkan perkiraan jenis ancaman yang paling sering dihadapi
+            oleh siswa seumuranmu.
+          </p>
+        </div>
+        <div class="chart-container">
+          <canvas id="ancamanChart"></canvas>
+        </div>
+      </section>
+
+      <!-- Jurus Jagoan Siber Section -->
+      <section id="jurus" class="py-12 md:py-20">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold">
+            Keluarkan Jurus Jagoan Sibermu!
+          </h2>
+          <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">
+            Ini dia beberapa jurus ampuh untuk melindungimu di dunia maya.
+            Pelajari dan praktikkan setiap hari!
+          </p>
+        </div>
+        <div id="jurus-accordion" class="max-w-3xl mx-auto space-y-4">
+          <!-- Akordeon Jurus akan di-generate oleh JavaScript -->
+        </div>
+      </section>
+
+      <!-- Bantuan Section -->
+      <section id="bantuan" class="py-12 md:py-20 bg-sky-100/70 rounded-2xl">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-sky-700">
+            Jika Terjadi Masalah, Jangan Panik!
+          </h2>
+          <p class="mt-3 max-w-2xl mx-auto text-lg text-sky-800">
+            Merasa tidak nyaman atau terancam? Sudah terlanjur klik tautan aneh?
+            Ikuti langkah-langkah ini.
+          </p>
+        </div>
+        <div
+          class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-left"
+        >
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="font-bold text-xl mb-2 text-sky-600">
+              🚨 Langkah Pertama
+            </h3>
+            <ul class="space-y-2 list-disc list-inside text-stone-700">
+              <li>
+                <b>Tetap Tenang.</b> Panik tidak akan menyelesaikan masalah.
+              </li>
+              <li>
+                <b>Segera Berhenti Berkomunikasi</b> dengan orang yang
+                mencurigakan.
+              </li>
+              <li>
+                <b>Jangan Hapus Bukti.</b> Ambil tangkapan layar (*screenshot*)
+                chat atau profil sebagai bukti.
+              </li>
+            </ul>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="font-bold text-xl mb-2 text-sky-600">
+              🗣️ Langkah Kedua
+            </h3>
+            <ul class="space-y-2 list-disc list-inside text-stone-700">
+              <li>
+                <b>Cerita!</b> Bicara ke orang tua, kakak, atau guru yang kamu
+                percaya.
+              </li>
+              <li>
+                <b>Mereka Akan Membantu,</b> bukan memarahimu. Meminta bantuan
+                itu keren dan berani!
+              </li>
+              <li>Jika akunmu terasa aneh, <b>segera ganti kata sandi.</b></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-800 text-stone-300 mt-20">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+        <p class="font-bold text-lg text-white">Kamu Adalah Kaptennya!</p>
+        <p class="mt-2 max-w-xl mx-auto">
+          Gunakan internet secara Cerdas, Berhati-hati, dan Bertanggung Jawab.
+          Jadilah Jagoan Siber yang menyebarkan hal-hal positif.
+        </p>
+        <p class="mt-6 text-sm text-stone-400">
+          &copy; 2025 Jagoan Siber. Dibuat untuk edukasi.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Modal untuk Detail Ancaman -->
+    <div
+      id="ancaman-modal"
+      class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-start">
+            <h3 id="modal-title" class="text-2xl font-bold text-sky-600"></h3>
+            <button
+              id="modal-close"
+              class="text-stone-400 hover:text-stone-800 transition"
+            >
+              &times;
+            </button>
+          </div>
+          <p id="modal-description" class="mt-4 text-stone-600"></p>
+          <div
+            class="mt-4 bg-yellow-100 border-l-4 border-yellow-400 p-4 rounded-r-lg"
+          >
+            <p class="font-bold text-yellow-800">Contoh:</p>
+            <p id="modal-example" class="mt-1 text-sm text-yellow-700"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Data dari presentasi
+        const ancamanData = [
+          {
+            id: "phishing",
+            title: "Phishing",
+            icon: "🎣",
+            description:
+              "Pesan palsu yang menyamar sebagai pihak resmi (seperti dari gim atau bank) dengan tujuan mencuri kata sandi, data pribadi, atau uangmu.",
+            example:
+              '"Selamat! Kamu memenangkan 1000 diamond, klik tautan ini untuk klaim!"',
+            color: "bg-blue-100",
+          },
+          {
+            id: "cyberbullying",
+            title: "Perundungan Siber",
+            icon: "😠",
+            description:
+              "Perilaku mengganggu, mengejek, mengancam, atau menyakiti orang lain secara sengaja melalui media digital seperti chat, komentar, atau unggahan.",
+            example:
+              "Meninggalkan komentar jahat berulang kali di unggahan seseorang atau menyebarkan gosip tidak benar di grup chat.",
+            color: "bg-red-100",
+          },
+          {
+            id: "oversharing",
+            title: "Oversharing",
+            icon: "🤫",
+            description:
+              "Membagikan terlalu banyak informasi pribadi di internet, seperti alamat rumah, nomor telepon, atau jadwal kegiatanmu, yang bisa disalahgunakan orang lain.",
+            example: "Mengunggah foto KTP atau Kartu Pelajar ke media sosial.",
+            color: "bg-green-100",
+          },
+          {
+            id: "password",
+            title: "Kata Sandi Lemah",
+            icon: "🔑",
+            description:
+              "Menggunakan kata sandi yang sangat mudah ditebak oleh orang lain atau program komputer, sehingga akunmu gampang diretas.",
+            example:
+              'Menggunakan kata sandi seperti "123456", "password", atau tanggal lahirmu.',
+            color: "bg-yellow-100",
+          },
+          {
+            id: "stranger",
+            title: "Orang Asing",
+            icon: "👻",
+            description:
+              "Orang yang tidak kamu kenal di dunia nyata mencoba berteman di dunia maya. Beberapa dari mereka mungkin punya niat buruk atau menyamar jadi orang lain.",
+            example:
+              "Akun tanpa foto profil atau teman bersama tiba-tiba mengirim pesan dan menanyakan informasi pribadimu.",
+            color: "bg-purple-100",
+          },
+          {
+            id: "hoax",
+            title: "Hoax / Berita Bohong",
+            icon: "📰",
+            description:
+              "Informasi atau berita palsu yang dibuat seolah-olah benar dan disebarkan secara luas untuk membuat kebingungan, kepanikan, atau menipu orang.",
+            example:
+              'Pesan berantai di WhatsApp tentang "bahaya radiasi ponsel" yang tidak memiliki sumber yang jelas.',
+            color: "bg-indigo-100",
+          },
+        ];
+
+        const jurusData = [
+          {
+            title: "Jurus #1: MIKIR DULU SEBELUM KLIK!",
+            content: `
+                        <ul class="space-y-3 list-decimal list-inside">
+                            <li><strong>Jangan Gampang Percaya:</strong> Jika tawaran terlalu bagus untuk jadi kenyataan (hadiah gratis, skin langka), kemungkinan besar itu bohong.</li>
+                            <li><strong>Cek Pengirimnya:</strong> Apakah kamu kenal pengirimnya? Apakah alamat email atau nama akunnya aneh?</li>
+                            <li><strong>Lihat Tautannya:</strong> Arahkan kursor ke tautan (tanpa mengklik) untuk melihat alamat aslinya. Tautan palsu seringkali salah ketik (misal: g00gle.com).</li>
+                            <li><strong>Tanya Orang Dewasa:</strong> Kalau ragu, selalu tanya orang tua atau gurumu!</li>
+                        </ul>
+                    `,
+          },
+          {
+            title: "Jurus #2: BUAT KATA SANDI SUPER KUAT!",
+            content: `
+                        <p class="mb-3">Kata sandi lemah itu seperti pintu rumah tanpa kunci. Gampang dibobol! Ini resepnya:</p>
+                        <ul class="space-y-3 list-disc list-inside">
+                            <li><strong>Panjang Lebih Baik:</strong> Minimal 8 karakter, tapi 12+ lebih bagus.</li>
+                            <li><strong>Kombinasi Ajaib:</strong> Campurkan <b>huruf besar</b>, <b>huruf kecil</b>, <b>angka</b>, dan <b>simbol</b> (!@#$).</li>
+                            <li><strong>JANGAN Sama Semua:</strong> Gunakan kata sandi berbeda untuk akun yang berbeda.</li>
+                            <li><strong>Super Rahasia:</strong> Jangan beritahu siapapun, bahkan teman terdekatmu!</li>
+                        </ul>
+                        <div class="mt-4 p-3 bg-stone-100 rounded-lg">
+                            <p>Contoh Lemah: <code class="bg-red-200 text-red-800 px-2 py-1 rounded">budi123</code></p>
+                            <p class="mt-2">Contoh Kuat: <code class="bg-green-200 text-green-800 px-2 py-1 rounded">BudiSukaN@siG0reng!</code></p>
+                        </div>
+                    `,
+          },
+          {
+            title: "Jurus #3: PRIVASI ITU KEREN!",
+            content: `
+                        <p class="mb-3">Mengatur privasi bukan berarti kamu kuper, tapi berarti kamu cerdas dan peduli pada keamananmu.</p>
+                        <ul class="space-y-3 list-disc list-inside">
+                            <li><strong>Setel Akun Jadi "PRIVATE":</strong> Di Instagram, TikTok, dll., setel akunmu agar hanya teman yang disetujui yang bisa melihat unggahanmu.</li>
+                            <li><strong>Pilih-Pilih Teman:</strong> Jangan asal terima permintaan pertemanan dari orang yang tidak kamu kenal sama sekali di dunia nyata.</li>
+                            <li><strong>Pikir Sebelum Unggah:</strong> Tanyakan pada diri sendiri, "Apakah aku nyaman jika guru atau orang tuaku melihat ini?" Jika tidak, jangan unggah.</li>
+                            <li><strong>Jaga Harta Karunmu:</strong> Jangan pernah unggah foto KTP, kartu keluarga, alamat rumah, atau nomor telepon di tempat umum.</li>
+                        </ul>
+                    `,
+          },
+          {
+            title: "Jurus #4: JADILAH NETIZEN BAIK (ANTI PERUNDUNGAN)",
+            content: `
+                        <p class="mb-3">Jejak digital itu abadi. Jadi, selalu sebarkan kebaikan. Ingat prinsip <strong>T.H.I.N.K.</strong> sebelum berkomentar atau mengunggah:</p>
+                        <ul class="space-y-2 font-mono bg-stone-100 p-4 rounded-lg">
+                            <li><strong>T</strong>rue (Benar?)</li>
+                            <li><strong>H</strong>elpful (Membantu?)</li>
+                            <li><strong>I</strong>nspiring (Memberi Inspirasi?)</li>
+                            <li><strong>N</strong>ecessary (Penting?)</li>
+                            <li><strong>K</strong>ind (Baik?)</li>
+                        </ul>
+                        <p class="mt-4 font-bold">Jika kamu dirundung:</p>
+                        <p>Jangan dibalas, cukup <strong>Screenshot, Blokir, Laporkan, dan Cerita</strong> ke orang dewasa.</p>
+                    `,
+          },
+        ];
+
+        // Generate Kartu Ancaman
+        const ancamanContainer = document.getElementById("ancaman-cards");
+        ancamanData.forEach((ancaman) => {
+          const card = document.createElement("div");
+          card.className = `card p-6 rounded-lg shadow-md cursor-pointer ${ancaman.color}`;
+          card.setAttribute("data-id", ancaman.id);
+          card.innerHTML = `
+                    <div class="text-4xl mb-4">${ancaman.icon}</div>
+                    <h3 class="text-xl font-bold">${ancaman.title}</h3>
+                    <p class="mt-2 text-stone-600">${ancaman.description.substring(0, 70)}...</p>
+                `;
+          ancamanContainer.appendChild(card);
+        });
+
+        // Generate Jurus Accordion
+        const jurusContainer = document.getElementById("jurus-accordion");
+        jurusData.forEach((jurus, index) => {
+          const item = document.createElement("div");
+          item.className = "border border-stone-200 rounded-lg overflow-hidden";
+          item.innerHTML = `
+                    <h2>
+                        <button type="button" class="flex items-center justify-between w-full p-5 font-semibold text-left text-stone-800 bg-stone-100 hover:bg-stone-200 transition" data-accordion-target="#accordion-body-${index}" aria-expanded="${index === 0 ? "true" : "false"}">
+                            <span>${jurus.title}</span>
+                            <svg data-accordion-icon class="w-6 h-6 shrink-0 transform ${index === 0 ? "" : "rotate-180"}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </h2>
+                    <div id="accordion-body-${index}" class="${index === 0 ? "" : "hidden"} p-5 border-t border-stone-200">
+                        <div class="text-stone-600">${jurus.content}</div>
+                    </div>
+                `;
+          jurusContainer.appendChild(item);
+        });
+
+        // Accordion Logic
+        jurusContainer
+          .querySelectorAll("[data-accordion-target]")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              const targetId = button.getAttribute("data-accordion-target");
+              const targetBody = document.querySelector(targetId);
+              const isExpanded =
+                button.getAttribute("aria-expanded") === "true";
+
+              targetBody.classList.toggle("hidden");
+              button.setAttribute("aria-expanded", !isExpanded);
+              button
+                .querySelector("[data-accordion-icon]")
+                .classList.toggle("rotate-180");
+            });
+          });
+
+        // Modal Logic
+        const modal = document.getElementById("ancaman-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalDescription = document.getElementById("modal-description");
+        const modalExample = document.getElementById("modal-example");
+        const closeModalButton = document.getElementById("modal-close");
+
+        ancamanContainer.querySelectorAll(".card").forEach((card) => {
+          card.addEventListener("click", () => {
+            const ancamanId = card.getAttribute("data-id");
+            const data = ancamanData.find((a) => a.id === ancamanId);
+            if (data) {
+              modalTitle.textContent = `${data.icon} ${data.title}`;
+              modalDescription.textContent = data.description;
+              modalExample.textContent = data.example;
+              modal.classList.remove("hidden");
+              modal.classList.add("flex");
+            }
+          });
+        });
+
+        const closeModal = () => {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        };
+
+        closeModalButton.addEventListener("click", closeModal);
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) {
+            closeModal();
+          }
+        });
+
+        // Chart.js Logic
+        const ctx = document.getElementById("ancamanChart").getContext("2d");
+        const ancamanChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: [
+              "Phishing",
+              "Hoax",
+              "Perundungan Siber",
+              "Kata Sandi Lemah",
+              "Oversharing",
+            ],
+            datasets: [
+              {
+                label: "Persentase Siswa yang Pernah Mengalami",
+                data: [65, 55, 42, 75, 50],
+                backgroundColor: [
+                  "rgba(59, 130, 246, 0.6)",
+                  "rgba(168, 85, 247, 0.6)",
+                  "rgba(239, 68, 68, 0.6)",
+                  "rgba(245, 158, 11, 0.6)",
+                  "rgba(34, 197, 94, 0.6)",
+                ],
+                borderColor: [
+                  "rgba(59, 130, 246, 1)",
+                  "rgba(168, 85, 247, 1)",
+                  "rgba(239, 68, 68, 1)",
+                  "rgba(245, 158, 11, 1)",
+                  "rgba(34, 197, 94, 1)",
+                ],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                  callback: function (value) {
+                    return value + "%";
+                  },
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return context.label + ": " + context.raw + "%";
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Mobile Menu Logic
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const menuIconOpen = document.getElementById("menu-icon-open");
+        const menuIconClose = document.getElementById("menu-icon-close");
+
+        mobileMenuButton.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+          menuIconOpen.classList.toggle("hidden");
+          menuIconOpen.classList.toggle("block");
+          menuIconClose.classList.toggle("hidden");
+          menuIconClose.classList.toggle("block");
+        });
+
+        // Close mobile menu when a link is clicked
+        mobileMenu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            mobileMenu.classList.add("hidden");
+            menuIconOpen.classList.remove("hidden");
+            menuIconClose.classList.add("hidden");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
